@@ -1,0 +1,66 @@
+I'll choose objectives 1 and 2 for this demonstration.
+Objective 1: System Health Monitoring Script (Bash)
+#!/bin/bash
+
+# Define thresholds
+cpu_threshold=80
+memory_threshold=80
+disk_threshold=90
+
+# Check CPU usage
+cpu_usage=$(top -n 1 | grep -i "Cpu(s) idl" | awk '{print 100 - $8}')
+if [[ $cpu_usage -gt $cpu_threshold ]]; then
+    echo "CPU usage is high ($cpu_usage%)"
+fi
+
+# Check memory usage
+memory_usage=$(free -m | grep -i "Mem" | awk '{print $3 / $2 * 100}')
+if [[ $memory_usage -gt $memory_threshold ]]; then
+    echo "Memory usage is high ($memory_usage%)"
+fi
+
+# Check disk space
+disk_usage=$(df -h / | grep -i "/$" | awk '{print $5}')
+if [[ $disk_usage | grep -q "^[0-9][0-9]?%$" ]]; then
+    disk_usage=${disk_usage%?}
+    if [[ $disk_usage -gt $disk_threshold ]]; then
+        echo "Disk usage is high ($disk_usage%)"
+    fi
+fi
+
+# Check running processes
+num_processes=$(ps -ef | wc -l)
+echo "Number of running processes: $num_processes"
+
+This Bash script checks CPU usage, memory usage, disk space, and the number of running processes. If any metric exceeds the defined threshold, it prints a message to the console.
+Objective 2: Automated Backup Solution (Python)
+import shutil
+import os
+import datetime
+
+def backup_directory(source_dir, destination_dir):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    backup_dir = f"{destination_dir}/backup_{timestamp}"
+    os.makedirs(backup_dir, exist_ok=True)
+
+    try:
+        shutil.copytree(source_dir, backup_dir)
+        print(f"Backup created successfully: {backup_dir}")
+    except Exception as e:
+        print(f"Backup failed: {e}")
+
+# Example usage
+source_dir = "/path/to/your/source/directory"
+destination_dir = "/path/to/your/backup/destination"
+
+backup_directory(source_dir, destination_dir)
+
+This Python script backs up a specified directory to a destination directory, creating a timestamped backup folder. It handles potential exceptions and provides a success or failure message.
+Once you've executed the scripts, you can:
+ * Monitor the output: Check the console or log file for any messages indicating potential issues or warnings.
+ * Customize thresholds: Adjust the thresholds in the system health monitoring script to match your specific requirements.
+ * Expand functionality: Add more checks to the system health monitoring script, such as checking network connectivity, disk I/O, or system load.
+ * Automate backups: Set up a cron job or task scheduler to run the backup script regularly.
+ * Enhance security: Implement additional security measures for the backup script, such as encrypting backups or using authentication mechanisms.
+ * Integrate with other tools: Consider integrating the scripts with other monitoring or automation tools for more comprehensive management.
+Remember to replace the placeholder paths with your actual source and destination directories in the backup script.
